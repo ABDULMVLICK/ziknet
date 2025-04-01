@@ -2,7 +2,11 @@
 
 header('Content-Type: application/json');
 
-$host = 'db';
+/**
+ * Un exemple d'API en PHP définition des endpoints 
+ */
+
+$host = 'db'; // hote définit dans le docker-compose
 $dbname = 'db';
 $username = 'root';
 $password = 'admin';
@@ -17,27 +21,36 @@ try {
     exit;
 }
 
-$method = $_SERVER['REQUEST_METHOD'];
+$method = $_SERVER['REQUEST_METHOD']; // verb HTTP GET POST ... 
 $path = trim($_SERVER['REQUEST_URI'], '/');
 
+// /users en GET  ENDPOINT
 if ($method === 'GET' && $path === 'users') {
     // Récupérer tous les utilisateurs
     // $stmt = $pdo->query("SELECT * FROM users");
     // $users = $stmt->fetchAll();
-    echo json_encode(['users' => '']);
+    echo json_encode(['users' => '', 'path' => $path]);
     exit;
 }
 
-if ($method === 'POST' && $path === 'users') {
+// endpoint messages affiche les messages posté par un utilisateur ENDPOINT
+if ($method === 'GET' && $path === 'messages') {
     // Ajouter un utilisateur
-    $data = json_decode(file_get_contents('php://input'), true);
-    if (!isset($data['name']) || !isset($data['email'])) {
-        echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants']);
-        exit;
-    }
 
-    $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (:name, :email)");
-    $stmt->execute(['name' => $data['name'], 'email' => $data['email']]);
+    echo json_encode(['status' => 'success', 'message' => [
+        'id' => 1,
+        'content' => 'Je cherche un musicien qui fait de la guitarre',
+        'user_id' => 6
+    ]]);
+    exit;
+}
+
+// endpoint message ENDPOINT
+if ($method === 'POST' && $path === 'message') {
+    // Ajouter un utilisateur
+
+    $stmt = $pdo->prepare("INSERT INTO messages (content, user_id) VALUES (:content, :user_id)");
+    $stmt->execute(['content' => $data['name'], 'user_id' => $data['email']]);
 
     echo json_encode(['status' => 'success', 'message' => 'Utilisateur ajouté']);
     exit;

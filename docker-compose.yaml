@@ -4,11 +4,12 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.back
+    container_name: php-app
     ports:
       - "8080:80"
     volumes:
-      - ./src:/var/www/html
+      - ./api:/var/www/html
     depends_on:
       - db
     networks:
@@ -30,7 +31,20 @@ services:
   adminer:
     image: adminer
     ports:
-      - "8088:8080"
+      - "8088:8080" # map les ports machine et conteneur
+    networks:
+      - app_network
+
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile.front
+    container_name: app-front-music
+    volumes:
+      - ./front:/app
+      - /app/node_modules # évite d'écraser les modules
+    ports:
+      - "5175:5173"  # Map port 5175 in the container to port 5173 on the host
     networks:
       - app_network
 
