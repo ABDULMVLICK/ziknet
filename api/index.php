@@ -3,31 +3,25 @@
 // Définir le type de contenu comme JSON
 header('Content-Type: application/json');
 
-// CORS: Autoriser l'origine http://localhost:5175 (le frontend) à accéder à l'API
-// Cette ligne est essentielle pour que les requêtes venant du frontend React puissent accéder à l'API PHP
-header("Access-Control-Allow-Origin: http://localhost:5173"); // Ou précisez http://localhost:5175 pour plus de sécurité
+// CORS: Autoriser l'origine http://localhost:5173 (le frontend) à accéder à l'API
+header("Access-Control-Allow-Origin: http://localhost:5173");
 
-// CORS: Spécifier les méthodes HTTP autorisées (GET, POST, PUT, DELETE, OPTIONS)
-// Cela permet d'accepter certaines actions sur l'API, comme récupérer des données ou les envoyer.
+// CORS: Spécifier les méthodes HTTP autorisées
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
 // CORS: Spécifier les en-têtes autorisés dans la requête HTTP
-// Par exemple, le frontend peut envoyer un en-tête Content-Type pour indiquer le type des données (JSON)
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Si la méthode HTTP est OPTIONS (pré-flight request), répondre directement avec un code 200 OK
-// Cette requête OPTIONS est envoyée par le navigateur avant toute autre demande HTTP pour vérifier les permissions CORS.
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200); // Répondre avec un code 200 OK
-    exit(); // Terminer l'exécution de l'API pour cette requête OPTIONS
+    http_response_code(200);
+    exit();
 }
 
 require_once __DIR__ . "/config.php";
 require_once __DIR__ . "/signup.php";
 require_once __DIR__ . "/login.php";
-/**
- * Un exemple d'API en PHP définition des endpoints 
- */
+require_once __DIR__ . "/UsersController.php"; // Include the new UsersController
 
 $host = 'db'; // hote définit dans le docker-compose
 $dbname = 'db';
@@ -47,12 +41,11 @@ try {
 $method = $_SERVER['REQUEST_METHOD']; // verb HTTP GET POST ... 
 $path = trim($_SERVER['REQUEST_URI'], '/');
 
-// /users en GET  ENDPOINT
+// /users en GET ENDPOINT
 if ($method === 'GET' && $path === 'users') {
-    // Récupérer tous les utilisateurs
-    // $stmt = $pdo->query("SELECT * FROM users");
-    // $users = $stmt->fetchAll();
-    echo json_encode(['users' => '', 'path' => $path]);
+   
+    $result = UsersController($pdo);
+    echo json_encode($result);
     exit;
 }
 
@@ -88,7 +81,6 @@ if ($method === 'POST' && $path === 'signup') {
 }
 
 // endpoint login ENDPOINT
-
 if ($method === 'POST' && $path === 'login') {
 
    header('Content-Type: application/json');
@@ -113,8 +105,6 @@ if ($method === 'POST' && $path === 'login') {
 
     exit;
 }
-
-
 
 // endpoint message ENDPOINT
 if ($method === 'POST' && $path === 'message') {

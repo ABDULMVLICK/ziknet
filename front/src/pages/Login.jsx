@@ -42,7 +42,7 @@ const Login = () => {
             if (result.status === "success") {
                 console.log("Redirection vers Home...");
                 setTimeout(() => {
-                    navigate("/Home");
+                    navigate("/home");
                 }, 2000);
             }
         } catch (error) {
