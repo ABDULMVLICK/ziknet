@@ -1,2 +1,12 @@
-db_data/
+# Node & build
 node_modules/
+dist/
+build/
+
+# Env et config
+.env
+
+# Mac OS
+.DS_Store
+
+
